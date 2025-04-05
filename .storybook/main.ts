@@ -1,4 +1,6 @@
+import * as path from "node:path";
 import type { StorybookConfig } from "@storybook/experimental-nextjs-vite";
+import { mergeConfig } from "vite";
 
 const config: StorybookConfig = {
 	stories: [
@@ -19,6 +21,15 @@ const config: StorybookConfig = {
 	staticDirs: ["../public"],
 	features: {
 		experimentalRSC: true,
+	},
+	async viteFinal(config) {
+		return mergeConfig(config, {
+			resolve: {
+				alias: {
+					"@": path.resolve(__dirname, ".."),
+				},
+			},
+		});
 	},
 };
 export default config;
