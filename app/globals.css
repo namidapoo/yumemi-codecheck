@@ -24,3 +24,13 @@ body {
 	color: var(--foreground);
 	font-family: Arial, Helvetica, sans-serif;
 }
+
+@keyframes loading {
+	0% {
+		transform: translateX(0);
+	}
+	100% {
+		/* 256(コンテナの幅) + 64(バーの初期位置補正) = 64(バーの幅) * 5 */
+		transform: translateX(500%);
+	}
+}
