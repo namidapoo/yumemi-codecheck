@@ -4,7 +4,7 @@ export default defineConfig({
 	test: {
 		coverage: {
 			provider: "v8",
-			include: ["{app,components,stories}/**/*"],
+			include: ["{app,components}/**/*"],
 			exclude: [
 				...coverageConfigDefaults.exclude,
 				"**/next.config.ts",
