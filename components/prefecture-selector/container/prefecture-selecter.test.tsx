@@ -8,32 +8,29 @@ vi.mock("@/api/getPrefectures", () => ({
 	getPrefectures: vi.fn(),
 }));
 
-describe("PrefecturesSelectorContainer", () => {
+describe("PrefectureSelector", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
 	it("正しく都道府県データを取得して表示する", async () => {
 		// Arrange
-		// APIレスポンスのモック
-		(getPrefectures as ReturnType<typeof vi.fn>).mockResolvedValue(
-			mockPrefectures,
-		);
+		// API呼び出しのモック
+		const mockedGetPrefectures = vi.mocked(getPrefectures, true);
+		mockedGetPrefectures.mockResolvedValue(mockPrefectures);
 		// Act
 		render(await PrefectureSelector({}));
 		// Assert
 		expect(getPrefectures).toHaveBeenCalledTimes(1);
-		// 都道府県データが表示されることを確認
 		expect(screen.getByText(/^北海道$/)).toBeInTheDocument();
-		expect(screen.getByText(/^沖縄県$/)).toBeInTheDocument();
+		expect(screen.getByText(/^青森県$/)).toBeInTheDocument();
 	});
 
 	it("API呼び出しが失敗した場合はエラーをスローする", async () => {
 		// Arrange
-		// APIレスポンスのモック
-		(getPrefectures as ReturnType<typeof vi.fn>).mockRejectedValue(
-			new Error("API Error"),
-		);
+		// API呼び出しのモック
+		const mockedGetPrefectures = vi.mocked(getPrefectures, true);
+		mockedGetPrefectures.mockRejectedValue(new Error("API Error"));
 		// エラー出力をキャプチャ
 		const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 		// Act, Assert
