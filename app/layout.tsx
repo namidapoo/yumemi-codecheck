@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type { FC, ReactNode } from "react";
 
 const geistSans = Geist({
@@ -25,7 +26,7 @@ const RootLayout: FC<Readonly<{ children: ReactNode }>> = ({ children }) => {
 			<body
 				className={cn(geistSans.variable, geistMono.variable, "antialiased")}
 			>
-				{children}
+				<NuqsAdapter>{children}</NuqsAdapter>
 			</body>
 		</html>
 	);
