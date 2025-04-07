@@ -5,7 +5,7 @@ import { mergeConfig } from "vite";
 const config: StorybookConfig = {
 	stories: [
 		"../app/**/*.stories.@(js|jsx|mjs|ts|tsx)",
-		"../features/**/*.stories.@(js|jsx|mjs|ts|tsx)",
+		"../components/**/*.stories.@(js|jsx|mjs|ts|tsx)",
 	],
 	addons: [
 		"@storybook/addon-essentials",
@@ -13,6 +13,7 @@ const config: StorybookConfig = {
 		"@chromatic-com/storybook",
 		"@storybook/experimental-addon-test",
 		"@storybook/addon-a11y",
+		"@storybook/addon-viewport",
 	],
 	framework: {
 		name: "@storybook/experimental-nextjs-vite",

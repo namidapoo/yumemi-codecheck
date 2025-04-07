@@ -17,9 +17,13 @@
 		"test:coverage": "vitest --coverage"
 	},
 	"dependencies": {
+		"clsx": "^2.1.1",
 		"next": "15.2.4",
+		"nuqs": "^2.4.1",
 		"react": "^19.0.0",
-		"react-dom": "^19.0.0"
+		"react-dom": "^19.0.0",
+		"server-only": "^0.0.1",
+		"tailwind-merge": "^3.1.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
@@ -27,6 +31,7 @@
 		"@storybook/addon-a11y": "^8.6.12",
 		"@storybook/addon-essentials": "^8.6.12",
 		"@storybook/addon-onboarding": "^8.6.12",
+		"@storybook/addon-viewport": "^8.6.12",
 		"@storybook/blocks": "^8.6.12",
 		"@storybook/experimental-addon-test": "^8.6.12",
 		"@storybook/experimental-nextjs-vite": "8.6.12",
@@ -35,6 +40,7 @@
 		"@tailwindcss/postcss": "^4",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.3.0",
+		"@testing-library/user-event": "^14.6.1",
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
