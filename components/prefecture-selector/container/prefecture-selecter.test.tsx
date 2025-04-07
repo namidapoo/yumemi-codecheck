@@ -1,5 +1,6 @@
 import { getPrefectures } from "@/api/getPrefectures";
 import { render, screen } from "@testing-library/react";
+import { withNuqsTestingAdapter } from "nuqs/adapters/testing";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockPrefectures } from "../mock/prefectures";
 import { PrefectureSelector } from "./prefecture-selector";
@@ -19,7 +20,9 @@ describe("PrefectureSelector", () => {
 		const mockedGetPrefectures = vi.mocked(getPrefectures, true);
 		mockedGetPrefectures.mockResolvedValue(mockPrefectures);
 		// Act
-		render(await PrefectureSelector({}));
+		render(await PrefectureSelector({}), {
+			wrapper: withNuqsTestingAdapter(),
+		});
 		// Assert
 		expect(getPrefectures).toHaveBeenCalledTimes(1);
 		expect(screen.getByText(/^北海道$/)).toBeInTheDocument();

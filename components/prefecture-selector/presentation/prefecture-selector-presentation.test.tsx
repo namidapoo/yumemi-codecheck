@@ -1,5 +1,6 @@
 import { composeStories } from "@storybook/react";
 import { render, screen } from "@testing-library/react";
+import { withNuqsTestingAdapter } from "nuqs/adapters/testing";
 import { describe, expect, it } from "vitest";
 import * as stories from "./prefecture-selector-presentation.stories";
 
@@ -8,7 +9,9 @@ const { WithData } = composeStories(stories);
 describe("PrefecturesPresentation", () => {
 	it('「選択済み: 0 / 47」というテキストが、aria-live="polite" な要素内に表示される', () => {
 		// Arrange, Act
-		render(<WithData />);
+		render(<WithData />, {
+			wrapper: withNuqsTestingAdapter(),
+		});
 		// Assert
 		// 空白などを除外してテキストをチェック
 		const liveRegion = screen.getByText((_content, node) => {
@@ -21,7 +24,9 @@ describe("PrefecturesPresentation", () => {
 
 	it("トップレベルの「すべて選択」ボタンと「選択をクリア」ボタンが表示される", () => {
 		// Arrange, Act
-		render(<WithData />);
+		render(<WithData />, {
+			wrapper: withNuqsTestingAdapter(),
+		});
 		// Assert
 		const selectAllButtons = screen.getAllByRole("button", {
 			name: /すべて選択/,
@@ -34,7 +39,9 @@ describe("PrefecturesPresentation", () => {
 
 	it("地域名の見出し（h3）がすべて表示される", () => {
 		// Arrange, Act
-		render(<WithData />);
+		render(<WithData />, {
+			wrapper: withNuqsTestingAdapter(),
+		});
 		// Assert
 		const regionHeadings = screen.getAllByRole("heading", { level: 3 });
 		expect(regionHeadings).toHaveLength(6);
@@ -42,7 +49,9 @@ describe("PrefecturesPresentation", () => {
 
 	it("都道府県ボタンが合計 47 個表示される", () => {
 		// Arrange, Act
-		render(<WithData />);
+		render(<WithData />, {
+			wrapper: withNuqsTestingAdapter(),
+		});
 		// Assert
 		// すべて選択、選択をクリアの文言を除外してボタンをフィルタリング
 		const prefectureButtons = screen.getAllByRole("button", {
