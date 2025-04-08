@@ -9,7 +9,7 @@ type PageProps = {
 };
 
 const Page: FC<PageProps> = async ({ searchParams }) => {
-	await searchParamsCache.parse(searchParams);
+	const parsedSearchParams = await searchParamsCache.parse(searchParams);
 
 	return (
 		<main className="mx-auto min-h-screen max-w-6xl p-4 md:px-6 lg:px-8">
@@ -17,7 +17,7 @@ const Page: FC<PageProps> = async ({ searchParams }) => {
 			<PrefectureSelector />
 			<Suspense
 				fallback={<div>Loading...</div>}
-				key={JSON.stringify(await searchParams)}
+				key={JSON.stringify(parsedSearchParams)}
 			>
 				<GraphView />
 			</Suspense>
