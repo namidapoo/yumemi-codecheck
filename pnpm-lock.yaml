@@ -11,6 +11,12 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      highcharts:
+        specifier: ^12.2.0
+        version: 12.2.0
+      highcharts-react-official:
+        specifier: ^3.2.1
+        version: 3.2.1(highcharts@12.2.0)(react@19.1.0)
       next:
         specifier: 15.2.4
         version: 15.2.4(@babel/core@7.26.10)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -1604,6 +1610,15 @@ packages:
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
+
+  highcharts-react-official@3.2.1:
+    resolution: {integrity: sha512-hyQTX7ezCxl7JqumaWiGsroGWalzh24GedQIgO3vJbkGOZ6ySRAltIYjfxhrq4HszJOySZegotEF7v+haQ75UA==}
+    peerDependencies:
+      highcharts: '>=6.0.0'
+      react: '>=16.8.0'
+
+  highcharts@12.2.0:
+    resolution: {integrity: sha512-UUN+osTP3aeGc4KmoMuWAjzpKif8GYHFozzYI4O8h1ILGof25M/ZGBpXLvgqf1z0LVh7N9eG7i0HnzMfjcR4nA==}
 
   html-encoding-sniffer@4.0.0:
     resolution: {integrity: sha512-Y22oTqIU4uuPgEemfz7NDJz6OeKf12Lsu+QC+s3BVpda64lTiMYCyGwg5ki4vFxkMwQdeZDl2adZoqUgdFuTgQ==}
@@ -3943,6 +3958,13 @@ snapshots:
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
+
+  highcharts-react-official@3.2.1(highcharts@12.2.0)(react@19.1.0):
+    dependencies:
+      highcharts: 12.2.0
+      react: 19.1.0
+
+  highcharts@12.2.0: {}
 
   html-encoding-sniffer@4.0.0:
     dependencies:
