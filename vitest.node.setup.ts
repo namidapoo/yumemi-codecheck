@@ -5,3 +5,13 @@ import { afterEach } from "vitest";
 afterEach(() => {
 	cleanup();
 });
+
+// テストでHighchartsReactをレンダリングする際に必要なCSS.supportsをモック
+if (!window.CSS || typeof window.CSS.supports !== "function") {
+	Object.defineProperty(window, "CSS", {
+		value: {
+			supports: () => true,
+		},
+		writable: true,
+	});
+}
