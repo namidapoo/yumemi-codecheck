@@ -5,7 +5,7 @@ import { GraphViewPresentation } from "../presentation/graph-view-presentation";
 
 export const GraphView: FC = async () => {
 	const searchParams = searchParamsCache.all();
-	if (!searchParams.prefCodes) {
+	if (searchParams.prefCodes.length === 0) {
 		return null;
 	}
 	const population = await Promise.all(
