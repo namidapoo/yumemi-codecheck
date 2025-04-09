@@ -59,7 +59,7 @@ export const PrefectureSelectorPresentation: FC<Props> = ({ prefectures }) => {
 				<div className="flex gap-2">
 					<button
 						type="button"
-						className="cursor-pointer rounded-md bg-gray-100 px-3 py-2 text-sm transition-colors hover:bg-gray-200"
+						className="cursor-pointer rounded-md bg-gray-100 px-3 py-2 text-xs transition-colors hover:bg-gray-200"
 						aria-label="47都道府県をすべて選択"
 						onClick={handleSelectAll}
 					>
@@ -67,7 +67,7 @@ export const PrefectureSelectorPresentation: FC<Props> = ({ prefectures }) => {
 					</button>
 					<button
 						type="button"
-						className="cursor-pointer rounded-md bg-gray-100 px-3 py-2 text-sm transition-colors hover:bg-gray-200"
+						className="cursor-pointer rounded-md bg-gray-100 px-3 py-2 text-xs transition-colors hover:bg-gray-200"
 						onClick={handleClearSelection}
 					>
 						選択をクリア

@@ -112,6 +112,7 @@ export const GraphViewPresentation: FC<Props> = ({
 	prefectures,
 	selectedPrefCodes,
 }) => {
+	const isEmpty = selectedPrefCodes.length === 0;
 	const series = population
 		.map((popData, index) => {
 			const prefCode = selectedPrefCodes[index];
@@ -143,19 +144,21 @@ export const GraphViewPresentation: FC<Props> = ({
 	const options = {
 		...baseOtions,
 		series,
+		exporting: {
+			enabled: !isEmpty,
+		},
 	};
 
 	return (
-		<div
-			style={{
-				padding: "20px",
-				margin: "10px 0",
-				borderRadius: "8px",
-				boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)",
-				backgroundColor: "#fff",
-			}}
-		>
+		<div className="relative min-h-[400px] rounded-lg border border-gray-200 bg-white p-4 shadow-xs">
 			<HighchartsReact highcharts={Highcharts} options={options} />
+			{isEmpty && (
+				<div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+					<p className="text-center font-medium text-gray-600 text-sm">
+						都道府県を選択してください。
+					</p>
+				</div>
+			)}
 		</div>
 	);
 };
