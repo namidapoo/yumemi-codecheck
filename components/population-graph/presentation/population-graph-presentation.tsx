@@ -107,7 +107,7 @@ const baseOptions = {
 	},
 } satisfies Highcharts.Options;
 
-export const GraphViewPresentation: FC<Props> = ({
+export const PopulationGraphPresentation: FC<Props> = ({
 	population,
 	prefectures,
 	selectedPrefCodes,

@@ -1,10 +1,10 @@
 import { getPopulation } from "@/api/getPopulation";
-import { populationDataFactory } from "@/components/graph-view/mock/factory";
+import { populationDataFactory } from "@/components/population-graph/mock/factory";
 import { searchParamsCache } from "@/lib/search-params";
 import { render, screen } from "@testing-library/react";
 import { withNuqsTestingAdapter } from "nuqs/adapters/testing";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { GraphView } from "./graph-view";
+import { PopulationGraph } from "./population-graph";
 
 // API呼び出しをモック
 vi.mock("@/api/getPopulation", () => ({
@@ -19,7 +19,7 @@ vi.mock("@/api/getPrefectures", () => ({
 	]),
 }));
 
-describe("GraphView", () => {
+describe("PopulationGraph", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
@@ -36,7 +36,7 @@ describe("GraphView", () => {
 			return Promise.resolve(populationDataFactory.build());
 		});
 		// Act
-		render(await GraphView({}), {
+		render(await PopulationGraph({}), {
 			wrapper: withNuqsTestingAdapter(),
 		});
 		// Assert
@@ -51,7 +51,7 @@ describe("GraphView", () => {
 			prefCodes: [],
 		});
 		// Act
-		render(await GraphView({}), {
+		render(await PopulationGraph({}), {
 			wrapper: withNuqsTestingAdapter(),
 		});
 		// Assert
@@ -72,7 +72,7 @@ describe("GraphView", () => {
 		const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 		// Act, Assert
 		await expect(async () => {
-			render(await GraphView({}), { wrapper: withNuqsTestingAdapter() });
+			render(await PopulationGraph({}), { wrapper: withNuqsTestingAdapter() });
 		}).rejects.toThrow("API Error");
 		expect(getPopulation).toHaveBeenCalledTimes(1);
 		consoleSpy.mockRestore();

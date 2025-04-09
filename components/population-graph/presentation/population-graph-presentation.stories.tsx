@@ -1,7 +1,7 @@
 import { SPStory } from "@/.storybook/viewport";
-import { populationDataFactory } from "@/components/graph-view/mock/factory";
+import { populationDataFactory } from "@/components/population-graph/mock/factory";
 import type { Meta, StoryObj } from "@storybook/react";
-import { GraphViewPresentation } from "./graph-view-presentation";
+import { PopulationGraphPresentation } from "./population-graph-presentation";
 
 const mockPrefectures = [
 	{ prefCode: 1, prefName: "北海道" },
@@ -10,18 +10,18 @@ const mockPrefectures = [
 ];
 
 const meta = {
-	title: "GraphView",
-	component: GraphViewPresentation,
+	title: "PopulationGraph",
+	component: PopulationGraphPresentation,
 	args: {
 		population: [],
 		prefectures: mockPrefectures,
 		selectedPrefCodes: [],
 	},
-} satisfies Meta<typeof GraphViewPresentation>;
+} satisfies Meta<typeof PopulationGraphPresentation>;
 
 export default meta;
 
-type Story = StoryObj<typeof GraphViewPresentation>;
+type Story = StoryObj<typeof PopulationGraphPresentation>;
 
 export const Default: Story = {};
 
