@@ -6,9 +6,11 @@ import HighchartsReact from "highcharts-react-official";
 // v12は"highcharts"ではなく"highcharts/es-modules/**/*"からインポートする
 // see: https://www.highcharts.com/docs/getting-started/version-12
 import Highcharts from "highcharts/es-modules/masters/highcharts.src.js";
+import { useState } from "react";
 import "highcharts/es-modules/masters/highcharts-more.src.js";
 import "highcharts/es-modules/masters/modules/exporting.src.js";
 import "highcharts/es-modules/masters/modules/accessibility.src.js";
+import { cn } from "@/lib/utils";
 import type { FC } from "react";
 
 type PopulationData = Awaited<ReturnType<typeof getPopulation>>;
@@ -57,7 +59,7 @@ const baseOptions = {
 	},
 	tooltip: {
 		headerFormat:
-			'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 12px;">' +
+			'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 4px;">' +
 			'<span style="font-size: 13px; font-weight: bold; color: {point.color}; max-width: 70%;">{series.name}</span>' +
 			'<span style="font-size: 12px; color: #666; min-width: 50px; text-align: right;">{point.x}年</span>' +
 			"</div>",
@@ -113,6 +115,12 @@ export const PopulationGraphPresentation: FC<Props> = ({
 	selectedPrefCodes,
 }) => {
 	const isEmpty = selectedPrefCodes.length === 0;
+	const [activeTab, setActiveTab] = useState<string>("総人口");
+	const tabs = population[0]?.data.map((item) => item.label) ?? [];
+	if (tabs.length === 0) {
+		return null;
+	}
+
 	const series = population
 		.map((popData, index) => {
 			const prefCode = selectedPrefCodes[index];
@@ -120,13 +128,13 @@ export const PopulationGraphPresentation: FC<Props> = ({
 			if (!pref) {
 				return null;
 			}
-			const totalPopulationData = popData.data.find(
-				(dataItem) => dataItem.label === "総人口",
+			const categoryData = popData.data.find(
+				(dataItem) => dataItem.label === activeTab,
 			);
-			if (!totalPopulationData) {
+			if (!categoryData) {
 				return null;
 			}
-			const seriesData = totalPopulationData.data.map((point) => ({
+			const seriesData = categoryData.data.map((point) => ({
 				x: point.year,
 				y: point.value,
 			}));
@@ -150,15 +158,34 @@ export const PopulationGraphPresentation: FC<Props> = ({
 	};
 
 	return (
-		<div className="relative min-h-[400px] rounded-lg border border-gray-200 bg-white p-4 shadow-xs">
-			<HighchartsReact highcharts={Highcharts} options={options} />
-			{isEmpty && (
-				<div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-					<p className="text-center font-medium text-gray-600 text-sm">
-						都道府県を選択してください。
-					</p>
-				</div>
-			)}
+		<div className="space-y-4">
+			<div className="inline-flex rounded-lg bg-gray-200 p-1">
+				{tabs.map((tab) => (
+					<button
+						type="button"
+						key={tab}
+						onClick={() => setActiveTab(tab)}
+						className={cn(
+							"cursor-pointer rounded-md px-3 py-1.5 font-medium text-xs transition-colors",
+							activeTab === tab
+								? "bg-white text-indigo-700 shadow-sm"
+								: "text-gray-600 hover:text-gray-800",
+						)}
+					>
+						{tab}
+					</button>
+				))}
+			</div>
+			<div className="relative min-h-[400px] rounded-lg border border-gray-200 bg-white p-4 shadow-xs">
+				<HighchartsReact highcharts={Highcharts} options={options} />
+				{isEmpty && (
+					<div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+						<p className="text-center font-medium text-gray-600 text-sm">
+							都道府県を選択してください。
+						</p>
+					</div>
+				)}
+			</div>
 		</div>
 	);
 };
