@@ -51,7 +51,7 @@ export const PrefectureSelectorPresentation: FC<Props> = ({ prefectures }) => {
 	};
 
 	return (
-		<div className="p-4">
+		<div className="rounded-xl bg-white p-4 shadow-xs">
 			<div className="mb-3 flex items-center justify-between">
 				<p className="text-gray-600 text-sm" aria-live="polite">
 					選択済み: <span className="font-medium">{selectedCount}</span> / 47
@@ -59,7 +59,7 @@ export const PrefectureSelectorPresentation: FC<Props> = ({ prefectures }) => {
 				<div className="flex gap-2">
 					<button
 						type="button"
-						className="cursor-pointer rounded-md bg-gray-100 px-3 py-2 text-sm transition-colors hover:bg-gray-200"
+						className="cursor-pointer rounded-md bg-gray-100 px-3 py-2 text-xs transition-colors hover:bg-gray-200"
 						aria-label="47都道府県をすべて選択"
 						onClick={handleSelectAll}
 					>
@@ -67,7 +67,7 @@ export const PrefectureSelectorPresentation: FC<Props> = ({ prefectures }) => {
 					</button>
 					<button
 						type="button"
-						className="cursor-pointer rounded-md bg-gray-100 px-3 py-2 text-sm transition-colors hover:bg-gray-200"
+						className="cursor-pointer rounded-md bg-gray-100 px-3 py-2 text-xs transition-colors hover:bg-gray-200"
 						onClick={handleClearSelection}
 					>
 						選択をクリア
@@ -76,7 +76,10 @@ export const PrefectureSelectorPresentation: FC<Props> = ({ prefectures }) => {
 			</div>
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 				{regionGroups.map((group) => (
-					<div key={group.region} className="rounded-lg border p-3">
+					<div
+						key={group.region}
+						className="rounded-lg border border-gray-200 p-3"
+					>
 						<div className="mb-2 flex items-center justify-between">
 							<h3 className="font-medium text-gray-700 text-sm">
 								{group.region}
