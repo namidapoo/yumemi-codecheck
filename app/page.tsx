@@ -10,6 +10,7 @@ type PageProps = {
 
 const Page: FC<PageProps> = async ({ searchParams }) => {
 	const parsedSearchParams = await searchParamsCache.parse(searchParams);
+	const hasPrefecture = parsedSearchParams.prefCodes.length > 0;
 
 	return (
 		<main className="mx-auto min-h-screen max-w-6xl p-4 md:px-6 lg:px-8">
@@ -17,7 +18,8 @@ const Page: FC<PageProps> = async ({ searchParams }) => {
 			<PrefectureSelector />
 			<Suspense
 				fallback={<div>Loading...</div>}
-				key={JSON.stringify(parsedSearchParams)}
+				// prefCodes が0→1に変化したらキーを変更してfallback
+				key={hasPrefecture ? "hasPrefecture" : "noPrefecture"}
 			>
 				<GraphView />
 			</Suspense>
