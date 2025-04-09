@@ -20,7 +20,7 @@ type Props = {
 	selectedPrefCodes: number[];
 };
 
-const baseOtions = {
+const baseOptions = {
 	chart: {
 		type: "line",
 		spacingTop: 20,
@@ -142,7 +142,7 @@ export const GraphViewPresentation: FC<Props> = ({
 		);
 
 	const options = {
-		...baseOtions,
+		...baseOptions,
 		series,
 		exporting: {
 			enabled: !isEmpty,
