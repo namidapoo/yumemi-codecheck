@@ -1,7 +1,7 @@
 import { getPopulation } from "@/api/getPopulation";
 import { populationDataFactory } from "@/components/graph-view/mock/factory";
 import { searchParamsCache } from "@/lib/search-params";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { withNuqsTestingAdapter } from "nuqs/adapters/testing";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GraphView } from "./graph-view";
@@ -45,18 +45,20 @@ describe("GraphView", () => {
 		expect(getPopulation).toHaveBeenCalledWith(2);
 	});
 
-	it("prefCodes が存在しない場合は null を返す", async () => {
+	it("prefCodes が存在しない場合に「都道府県を選択してください。」と表示される", async () => {
 		// Arrange
 		vi.spyOn(searchParamsCache, "all").mockReturnValue({
 			prefCodes: [],
 		});
 		// Act
-		const { container } = render(await GraphView({}), {
+		render(await GraphView({}), {
 			wrapper: withNuqsTestingAdapter(),
 		});
 		// Assert
-		expect(container.firstChild).toBeNull();
 		expect(getPopulation).not.toHaveBeenCalled();
+		expect(
+			screen.getByText("都道府県を選択してください。"),
+		).toBeInTheDocument();
 	});
 
 	it("API 呼び出しが失敗した場合はエラーをスローする", async () => {
