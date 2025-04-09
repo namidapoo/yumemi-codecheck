@@ -4,7 +4,7 @@ import { render } from "@testing-library/react";
 import { withNuqsTestingAdapter } from "nuqs/adapters/testing";
 import { describe, it } from "vitest";
 import { populationDataFactory } from "../mock/factory";
-import * as stories from "./graph-view-presentation.stories";
+import * as stories from "./population-graph-presentation.stories";
 
 const { WithData } = composeStories(stories);
 

@@ -6,10 +6,12 @@ import HighchartsReact from "highcharts-react-official";
 // v12は"highcharts"ではなく"highcharts/es-modules/**/*"からインポートする
 // see: https://www.highcharts.com/docs/getting-started/version-12
 import Highcharts from "highcharts/es-modules/masters/highcharts.src.js";
+import { useState } from "react";
 import "highcharts/es-modules/masters/highcharts-more.src.js";
 import "highcharts/es-modules/masters/modules/exporting.src.js";
 import "highcharts/es-modules/masters/modules/accessibility.src.js";
 import type { FC } from "react";
+import { CategorySelector, type tabs } from "./category-selector";
 
 type PopulationData = Awaited<ReturnType<typeof getPopulation>>;
 type Prefecture = Awaited<ReturnType<typeof getPrefectures>>[number];
@@ -43,7 +45,7 @@ const baseOptions = {
 	},
 	yAxis: {
 		title: {
-			text: "人口 （万人）",
+			text: "人口 (万人)",
 			margin: 8,
 		},
 		labels: {
@@ -57,7 +59,7 @@ const baseOptions = {
 	},
 	tooltip: {
 		headerFormat:
-			'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 20px;">' +
+			'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 4px;">' +
 			'<span style="font-size: 13px; font-weight: bold; color: {point.color}; max-width: 70%;">{series.name}</span>' +
 			'<span style="font-size: 12px; color: #666; min-width: 50px; text-align: right;">{point.x}年</span>' +
 			"</div>",
@@ -69,6 +71,9 @@ const baseOptions = {
 		padding: 12,
 		shadow: true,
 		useHTML: true,
+	},
+	exporting: {
+		enabled: false,
 	},
 	credits: {
 		enabled: false,
@@ -107,12 +112,14 @@ const baseOptions = {
 	},
 } satisfies Highcharts.Options;
 
-export const GraphViewPresentation: FC<Props> = ({
+export const PopulationGraphPresentation: FC<Props> = ({
 	population,
 	prefectures,
 	selectedPrefCodes,
 }) => {
 	const isEmpty = selectedPrefCodes.length === 0;
+	const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>("総人口");
+
 	const series = population
 		.map((popData, index) => {
 			const prefCode = selectedPrefCodes[index];
@@ -120,13 +127,13 @@ export const GraphViewPresentation: FC<Props> = ({
 			if (!pref) {
 				return null;
 			}
-			const totalPopulationData = popData.data.find(
-				(dataItem) => dataItem.label === "総人口",
+			const categoryData = popData.data.find(
+				(dataItem) => dataItem.label === activeTab,
 			);
-			if (!totalPopulationData) {
+			if (!categoryData) {
 				return null;
 			}
-			const seriesData = totalPopulationData.data.map((point) => ({
+			const seriesData = categoryData.data.map((point) => ({
 				x: point.year,
 				y: point.value,
 			}));
@@ -144,21 +151,26 @@ export const GraphViewPresentation: FC<Props> = ({
 	const options = {
 		...baseOptions,
 		series,
-		exporting: {
-			enabled: !isEmpty,
-		},
 	};
 
 	return (
-		<div className="relative min-h-[400px] rounded-lg border border-gray-200 bg-white p-4 shadow-xs">
-			<HighchartsReact highcharts={Highcharts} options={options} />
-			{isEmpty && (
-				<div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-					<p className="text-center font-medium text-gray-600 text-sm">
-						都道府県を選択してください。
-					</p>
+		<div className="space-y-4">
+			<div className="rounded-lg border border-gray-200 bg-white p-4 shadow-xs">
+				{/* ヘッダー部分：CategorySelector を右寄せで表示 */}
+				<div className="flex justify-end">
+					<CategorySelector activeTab={activeTab} setActiveTab={setActiveTab} />
 				</div>
-			)}
+				{/* グラフまたは空状態メッセージ */}
+				{isEmpty ? (
+					<div className="flex h-[450px] flex-col items-center justify-center">
+						<p className="text-center font-medium text-gray-600 text-sm">
+							都道府県を選択してください。
+						</p>
+					</div>
+				) : (
+					<HighchartsReact highcharts={Highcharts} options={options} />
+				)}
+			</div>
 		</div>
 	);
 };

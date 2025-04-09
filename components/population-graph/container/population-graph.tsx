@@ -2,13 +2,13 @@ import { getPopulation } from "@/api/getPopulation";
 import { getPrefectures } from "@/api/getPrefectures";
 import { searchParamsCache } from "@/lib/search-params";
 import type { FC } from "react";
-import { GraphViewPresentation } from "../presentation/graph-view-presentation";
+import { PopulationGraphPresentation } from "../presentation/population-graph-presentation";
 
-export const GraphView: FC = async () => {
+export const PopulationGraph: FC = async () => {
 	const searchParams = searchParamsCache.all();
 	if (searchParams.prefCodes.length === 0) {
 		return (
-			<GraphViewPresentation
+			<PopulationGraphPresentation
 				population={[]}
 				prefectures={[]}
 				selectedPrefCodes={[]}
@@ -26,7 +26,7 @@ export const GraphView: FC = async () => {
 	]);
 
 	return (
-		<GraphViewPresentation
+		<PopulationGraphPresentation
 			population={population}
 			prefectures={prefectures}
 			selectedPrefCodes={searchParams.prefCodes}

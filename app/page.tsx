@@ -1,4 +1,4 @@
-import { GraphView } from "@/components/graph-view/container/graph-view";
+import { PopulationGraph } from "@/components/population-graph/container/population-graph";
 import { PrefectureSelector } from "@/components/prefecture-selector/container/prefecture-selector";
 import { searchParamsCache } from "@/lib/search-params";
 import type { SearchParams } from "nuqs";
@@ -22,7 +22,7 @@ const Page: FC<PageProps> = async ({ searchParams }) => {
 					// prefCodes が0→1に変化したらキーを変更してfallback
 					key={hasPrefecture ? "hasPrefecture" : "noPrefecture"}
 				>
-					<GraphView />
+					<PopulationGraph />
 				</Suspense>
 			</div>
 		</main>
