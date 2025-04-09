@@ -1,11 +1,15 @@
 "use client";
 
-import Highcharts from "highcharts";
-import HighchartsReact from "highcharts-react-official";
-import type { FC } from "react";
-import "highcharts/modules/accessibility.js";
 import type { getPopulation } from "@/api/getPopulation";
 import type { getPrefectures } from "@/api/getPrefectures";
+import HighchartsReact from "highcharts-react-official";
+// v12は"highcharts"ではなく"highcharts/es-modules/**/*"からインポートする
+// see: https://www.highcharts.com/docs/getting-started/version-12
+import Highcharts from "highcharts/es-modules/masters/highcharts.src.js";
+import "highcharts/es-modules/masters/highcharts-more.src.js";
+import "highcharts/es-modules/masters/modules/exporting.src.js";
+import "highcharts/es-modules/masters/modules/accessibility.src.js";
+import type { FC } from "react";
 
 type PopulationData = Awaited<ReturnType<typeof getPopulation>>;
 type Prefecture = Awaited<ReturnType<typeof getPrefectures>>[number];
