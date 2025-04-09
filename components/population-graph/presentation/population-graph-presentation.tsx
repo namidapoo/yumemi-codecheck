@@ -10,8 +10,8 @@ import { useState } from "react";
 import "highcharts/es-modules/masters/highcharts-more.src.js";
 import "highcharts/es-modules/masters/modules/exporting.src.js";
 import "highcharts/es-modules/masters/modules/accessibility.src.js";
-import { cn } from "@/lib/utils";
 import type { FC } from "react";
+import { CategorySelector, type tabs } from "./category-selector";
 
 type PopulationData = Awaited<ReturnType<typeof getPopulation>>;
 type Prefecture = Awaited<ReturnType<typeof getPrefectures>>[number];
@@ -72,6 +72,9 @@ const baseOptions = {
 		shadow: true,
 		useHTML: true,
 	},
+	exporting: {
+		enabled: false,
+	},
 	credits: {
 		enabled: false,
 	},
@@ -115,11 +118,7 @@ export const PopulationGraphPresentation: FC<Props> = ({
 	selectedPrefCodes,
 }) => {
 	const isEmpty = selectedPrefCodes.length === 0;
-	const [activeTab, setActiveTab] = useState<string>("総人口");
-	const tabs = population[0]?.data.map((item) => item.label) ?? [];
-	if (tabs.length === 0) {
-		return null;
-	}
+	const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>("総人口");
 
 	const series = population
 		.map((popData, index) => {
@@ -152,38 +151,24 @@ export const PopulationGraphPresentation: FC<Props> = ({
 	const options = {
 		...baseOptions,
 		series,
-		exporting: {
-			enabled: !isEmpty,
-		},
 	};
 
 	return (
 		<div className="space-y-4">
-			<div className="inline-flex rounded-lg bg-gray-200 p-1">
-				{tabs.map((tab) => (
-					<button
-						type="button"
-						key={tab}
-						onClick={() => setActiveTab(tab)}
-						className={cn(
-							"cursor-pointer rounded-md px-3 py-1.5 font-medium text-xs transition-colors",
-							activeTab === tab
-								? "bg-white text-indigo-700 shadow-sm"
-								: "text-gray-600 hover:text-gray-800",
-						)}
-					>
-						{tab}
-					</button>
-				))}
-			</div>
-			<div className="relative min-h-[400px] rounded-lg border border-gray-200 bg-white p-4 shadow-xs">
-				<HighchartsReact highcharts={Highcharts} options={options} />
-				{isEmpty && (
-					<div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+			<div className="rounded-lg border border-gray-200 bg-white p-4 shadow-xs">
+				{/* ヘッダー部分：CategorySelector を右寄せで表示 */}
+				<div className="flex justify-end">
+					<CategorySelector activeTab={activeTab} setActiveTab={setActiveTab} />
+				</div>
+				{/* グラフまたは空状態メッセージ */}
+				{isEmpty ? (
+					<div className="flex h-[450px] flex-col items-center justify-center">
 						<p className="text-center font-medium text-gray-600 text-sm">
 							都道府県を選択してください。
 						</p>
 					</div>
+				) : (
+					<HighchartsReact highcharts={Highcharts} options={options} />
 				)}
 			</div>
 		</div>
