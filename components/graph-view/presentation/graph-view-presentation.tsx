@@ -43,7 +43,7 @@ const baseOptions = {
 	},
 	yAxis: {
 		title: {
-			text: "人口 （万人）",
+			text: "人口 (万人)",
 			margin: 8,
 		},
 		labels: {
@@ -57,7 +57,7 @@ const baseOptions = {
 	},
 	tooltip: {
 		headerFormat:
-			'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 20px;">' +
+			'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 12px;">' +
 			'<span style="font-size: 13px; font-weight: bold; color: {point.color}; max-width: 70%;">{series.name}</span>' +
 			'<span style="font-size: 12px; color: #666; min-width: 50px; text-align: right;">{point.x}年</span>' +
 			"</div>",
