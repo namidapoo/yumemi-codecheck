@@ -26,16 +26,22 @@ export const PrefectureSelectorPresentation: FC<Props> = ({ prefectures }) => {
 		const isSelected = selectedPrefCodes.includes(prefCode);
 		if (isSelected) {
 			setSelectedPrefCodes(
-				selectedPrefCodes.filter((code) => code !== prefCode),
+				selectedPrefCodes
+					.filter((code) => code !== prefCode)
+					.sort((a, b) => a - b),
 			);
 		} else {
-			setSelectedPrefCodes([...selectedPrefCodes, prefCode]);
+			setSelectedPrefCodes(
+				[...selectedPrefCodes, prefCode].sort((a, b) => a - b),
+			);
 		}
 	};
 
 	// すべての都道府県を選択
 	const handleSelectAll = () => {
-		const allPrefCodes = prefectures.map((pref) => pref.prefCode);
+		const allPrefCodes = prefectures
+			.map((pref) => pref.prefCode)
+			.sort((a, b) => a - b);
 		setSelectedPrefCodes(allPrefCodes);
 	};
 
@@ -46,11 +52,15 @@ export const PrefectureSelectorPresentation: FC<Props> = ({ prefectures }) => {
 		if (allSelected) {
 			// すべて選択されている場合は解除
 			setSelectedPrefCodes(
-				selectedPrefCodes.filter((code) => !prefCodes.includes(code)),
+				selectedPrefCodes
+					.filter((code) => !prefCodes.includes(code))
+					.sort((a, b) => a - b),
 			);
 		} else {
 			// 一部または全く選択されていない場合は追加
-			const newSelection = [...new Set([...selectedPrefCodes, ...prefCodes])];
+			const newSelection = [
+				...new Set([...selectedPrefCodes, ...prefCodes]),
+			].sort((a, b) => a - b);
 			setSelectedPrefCodes(newSelection);
 		}
 	};

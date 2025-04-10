@@ -367,4 +367,52 @@ describe("インタラクションの確認", () => {
 		expect(toggleButton).toHaveAttribute("aria-pressed", "false");
 		expect(toggleButton).toHaveTextContent("すべて選択");
 	});
+
+	it("追加された都道府県コードが数値順にソートされてURLに反映される", async () => {
+		// Arrange
+		const user = userEvent.setup();
+		const onUrlUpdate = vi.fn<OnUrlUpdateFunction>();
+		render(<WithData />, {
+			wrapper: withNuqsTestingAdapter({ onUrlUpdate }),
+		});
+		// 順番がバラバラになるように意図的に選択
+		const okinawaButton = screen.getByRole("button", { name: /^沖縄県$/ }); // prefCode: 47
+		const tokyoButton = screen.getByRole("button", { name: /^東京都$/ }); // prefCode: 13
+		const hokkaidoButton = screen.getByRole("button", { name: /^北海道$/ }); // prefCode: 1
+		// Act: 順番にクリック
+		await user.click(okinawaButton);
+		await user.click(tokyoButton);
+		await user.click(hokkaidoButton);
+		// Assert: 最後のクリック後のURLパラメータを確認
+		expect(onUrlUpdate).toHaveBeenCalledTimes(3);
+		const lastEvent = onUrlUpdate.mock.calls[2][0];
+		// 入力順序（47,13,1）にかかわらず、ソートされて数値順（1,13,47）になっているか確認
+		expect(lastEvent.queryString).toBe("?prefCodes=1,13,47");
+		expect(lastEvent.searchParams.get("prefCodes")).toBe("1,13,47");
+	});
+
+	it("地域選択時も都道府県コードがソートされてURLに反映される", async () => {
+		// Arrange
+		const user = userEvent.setup();
+		const onUrlUpdate = vi.fn<OnUrlUpdateFunction>();
+		// 関東地方（prefCode: 8-14）と沖縄県（prefCode: 47）を選択
+		render(<WithData />, {
+			wrapper: withNuqsTestingAdapter({
+				searchParams: "?prefCodes=47", // 最初に沖縄県だけ選択
+				onUrlUpdate,
+			}),
+		});
+		// 関東地方のボタンを取得
+		const kantoButton = screen.getByRole("button", {
+			name: /関東をすべて選択/,
+		});
+		// Act: 関東地方を選択
+		await user.click(kantoButton);
+		// Assert: URLパラメータが数値順にソートされているか確認
+		expect(onUrlUpdate).toHaveBeenCalledOnce();
+		const event = onUrlUpdate.mock.calls[0][0];
+		// 8,9,10,11,12,13,14（関東）と47（沖縄）が数値順に並んでいるか確認
+		expect(event.queryString).toBe("?prefCodes=8,9,10,11,12,13,14,47");
+		expect(event.searchParams.get("prefCodes")).toBe("8,9,10,11,12,13,14,47");
+	});
 });
