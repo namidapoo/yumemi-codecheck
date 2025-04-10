@@ -81,6 +81,11 @@ const baseOptions = {
 	credits: {
 		enabled: false,
 	},
+	legend: {
+		align: "center",
+		verticalAlign: "bottom",
+		layout: "horizontal",
+	},
 	responsive: {
 		rules: [
 			{
@@ -90,9 +95,10 @@ const baseOptions = {
 				chartOptions: {
 					chart: {
 						spacingLeft: 0,
-						spacingRight: 5,
+						spacingRight: 20,
 					},
 					xAxis: {
+						tickInterval: 15,
 						labels: {
 							style: {
 								fontSize: "10px",
