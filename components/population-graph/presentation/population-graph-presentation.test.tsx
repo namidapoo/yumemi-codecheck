@@ -27,6 +27,7 @@ describe("PopulationGraphPresentation", () => {
 		});
 
 		it("都道府県が選択されていない場合、ガイダンスメッセージを表示する", () => {
+			// Arrange, Act
 			render(
 				<WithData
 					selectedPrefCodes={[]}
@@ -37,12 +38,14 @@ describe("PopulationGraphPresentation", () => {
 					wrapper: withNuqsTestingAdapter(),
 				},
 			);
+			// Assert
 			expect(
 				screen.getByText("都道府県を選択してください。"),
 			).toBeInTheDocument();
 		});
 
 		it("ローディング中の場合、スピナーを表示する", () => {
+			// Arrange, Act
 			render(
 				<WithData
 					selectedPrefCodes={[13]}
@@ -54,12 +57,14 @@ describe("PopulationGraphPresentation", () => {
 					wrapper: withNuqsTestingAdapter(),
 				},
 			);
+			// Assert
 			// スピナーの要素が存在することを確認
 			const spinners = document.querySelectorAll(".animate-spin");
 			expect(spinners.length).toBeGreaterThan(0);
 		});
 
 		it("バリデーション中の場合、透過スタイルとスピナーを表示する", () => {
+			// Arrange, Act
 			render(
 				<WithData
 					selectedPrefCodes={[13]}
@@ -71,16 +76,17 @@ describe("PopulationGraphPresentation", () => {
 					wrapper: withNuqsTestingAdapter(),
 				},
 			);
+			// Assert
 			// 透過スタイルが適用されていることを確認
 			const container = document.querySelector(".opacity-40");
 			expect(container).toBeInTheDocument();
-
 			// バリデーション中のスピナーが表示されていることを確認
 			const spinners = document.querySelectorAll(".animate-spin");
 			expect(spinners.length).toBeGreaterThan(0);
 		});
 
 		it("バリデーション中かつローディング中の場合、適切な表示になる", () => {
+			// Arrange, Act
 			render(
 				<WithData
 					selectedPrefCodes={[13]}
@@ -93,17 +99,17 @@ describe("PopulationGraphPresentation", () => {
 					wrapper: withNuqsTestingAdapter(),
 				},
 			);
+			// Assert
 			// ローディングのスピナーのみが表示され、バリデーションのスピナーは表示されない
 			const spinners = document.querySelectorAll(".animate-spin");
 			expect(spinners.length).toBe(1);
 		});
 
 		it("カテゴリーを切り替えることができる", async () => {
+			// Arrange
 			const user = userEvent.setup();
-
 			// モックデータに複数のカテゴリーを含める
 			const mockPopulation = populationDataFactory.build();
-
 			render(
 				<WithData
 					selectedPrefCodes={[13]}
@@ -114,18 +120,23 @@ describe("PopulationGraphPresentation", () => {
 					wrapper: withNuqsTestingAdapter(),
 				},
 			);
-
 			// 初期状態では「総人口」が選択されている
 			const initialTab = screen.getByRole("tab", { name: "総人口" });
 			expect(initialTab).toHaveAttribute("aria-selected", "true");
-
+			// Y軸のタイトルが「総人口 (万人)」であることを確認
+			const initialYAxisTitle = screen.getByText("総人口 (万人)");
+			expect(initialYAxisTitle).toBeInTheDocument();
+			// Act
 			// 「年少人口」タブをクリック
 			const newTab = screen.getByRole("tab", { name: "年少人口" });
 			await user.click(newTab);
-
+			// Assert
 			// 選択状態が変わっていることを確認
 			expect(newTab).toHaveAttribute("aria-selected", "true");
 			expect(initialTab).toHaveAttribute("aria-selected", "false");
+			// Y軸のタイトルが「年少人口 (万人)」に変わっていることを確認
+			const yAxisTitle = screen.getByText("年少人口 (万人)");
+			expect(yAxisTitle).toBeInTheDocument();
 		});
 	});
 });
