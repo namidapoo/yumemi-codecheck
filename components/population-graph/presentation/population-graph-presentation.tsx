@@ -176,34 +176,29 @@ export const PopulationGraphPresentation: FC<Props> = ({
 								都道府県を選択してください。
 							</p>
 						</div>
+					) : isLoading ? (
+						<div className="flex h-full w-full flex-col items-center justify-center">
+							<div className="relative">
+								<div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-gray-800" />
+							</div>
+						</div>
 					) : (
-						<>
-							{isLoading ? (
-								<div className="flex h-full w-full flex-col items-center justify-center">
+						<div
+							className={cn(isValidating ? "opacity-40" : "")}
+							style={{ height: "100%" }}
+						>
+							<HighchartsReact
+								highcharts={Highcharts}
+								options={options}
+								containerProps={{ style: { height: "100%" } }}
+							/>
+							{isValidating && (
+								<div className="absolute inset-0 flex items-center justify-center">
 									<div className="relative">
 										<div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-gray-800" />
 									</div>
 								</div>
-							) : (
-								<div
-									className={cn(isValidating ? "opacity-40" : "")}
-									style={{ height: "100%" }}
-								>
-									<HighchartsReact
-										highcharts={Highcharts}
-										options={options}
-										containerProps={{ style: { height: "100%" } }}
-									/>
-								</div>
 							)}
-						</>
-					)}
-
-					{isValidating && !isLoading && !isEmpty && (
-						<div className="absolute inset-0 flex items-center justify-center">
-							<div className="relative">
-								<div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-gray-800" />
-							</div>
 						</div>
 					)}
 				</div>
