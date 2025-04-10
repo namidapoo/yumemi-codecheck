@@ -1,4 +1,7 @@
-import { type ApiResponse, requestApi } from "./utils";
+// ブラウザでないとドメインが取れない
+// そもそもClient ComponentsからセキュアにAPI叩くためのラッパーとしてこのRoute Handlersは存在する
+// なので`client-only`にしておく
+import "client-only";
 
 // 人口データの型定義
 type PopulationData = {
@@ -21,8 +24,8 @@ type PopulationData = {
 export const getPopulation = async (
 	prefCode: number,
 ): Promise<PopulationData> => {
-	const data = await requestApi<ApiResponse<PopulationData>>(
-		`/api/v1/population/composition/perYear?prefCode=${prefCode}`,
-	);
-	return data.result;
+	const res = await fetch(`/api/population?prefCode=${prefCode}`, {
+		cache: "force-cache",
+	});
+	return res.json();
 };
