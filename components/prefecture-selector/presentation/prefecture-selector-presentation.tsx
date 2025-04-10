@@ -21,7 +21,7 @@ export const PrefectureSelectorPresentation: FC<Props> = ({ prefectures }) => {
 	// 選択済みの都道府県数を計算
 	const selectedCount = selectedPrefCodes.length;
 
-	// 都道府県の選択状態を切り替える
+	// 単一の都道府県の選択状態を切り替える
 	const handleTogglePrefecture = (prefCode: number) => {
 		const isSelected = selectedPrefCodes.includes(prefCode);
 		if (isSelected) {
@@ -39,12 +39,9 @@ export const PrefectureSelectorPresentation: FC<Props> = ({ prefectures }) => {
 		setSelectedPrefCodes(allPrefCodes);
 	};
 
-	// 地域内のすべての都道府県を選択または解除
-	const handleSelectRegion = (prefCodes: number[]) => {
-		// 地域内のすべての都道府県が選択されているかチェック
-		const allSelected = prefCodes.every((code) =>
-			selectedPrefCodes.includes(code),
-		);
+	// 地域内の都道府県選択状態をトグルする
+	const toggleRegionSelection = (prefCodes: number[]) => {
+		const allSelected = isRegionFullySelected(prefCodes);
 
 		if (allSelected) {
 			// すべて選択されている場合は解除
@@ -61,6 +58,11 @@ export const PrefectureSelectorPresentation: FC<Props> = ({ prefectures }) => {
 	// 選択をクリア
 	const handleClearSelection = () => {
 		setSelectedPrefCodes(null);
+	};
+
+	// 地域内の全都道府県が選択されているか判定するヘルパー関数
+	const isRegionFullySelected = (prefCodes: number[]): boolean => {
+		return prefCodes.every((code) => selectedPrefCodes.includes(code));
 	};
 
 	return (
@@ -91,9 +93,7 @@ export const PrefectureSelectorPresentation: FC<Props> = ({ prefectures }) => {
 				{regionGroups.map((group) => {
 					// 地域内のすべての都道府県が選択されているかチェック
 					const regionPrefCodes = group.prefectures.map((p) => p.prefCode);
-					const allSelected = regionPrefCodes.every((code) =>
-						selectedPrefCodes.includes(code),
-					);
+					const allSelected = isRegionFullySelected(regionPrefCodes);
 
 					return (
 						<div
@@ -113,7 +113,7 @@ export const PrefectureSelectorPresentation: FC<Props> = ({ prefectures }) => {
 											: `${group.region}をすべて選択`
 									}
 									aria-pressed={allSelected}
-									onClick={() => handleSelectRegion(regionPrefCodes)}
+									onClick={() => toggleRegionSelection(regionPrefCodes)}
 								>
 									{allSelected ? "選択を解除" : "すべて選択"}
 								</button>
