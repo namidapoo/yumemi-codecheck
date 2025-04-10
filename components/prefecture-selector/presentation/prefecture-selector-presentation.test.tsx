@@ -191,6 +191,84 @@ describe("インタラクションの確認", () => {
 		expect(event.searchParams.get("prefCodes")).toBe("1,2,3,4,5,6,7");
 	});
 
+	it("地域内のすべての都道府県が選択されている場合、地域ボタンは「選択を解除」と表示される", async () => {
+		// Arrange
+		render(<WithData />, {
+			wrapper: withNuqsTestingAdapter({
+				searchParams: "?prefCodes=1,2,3,4,5,6,7",
+			}),
+		});
+
+		// Assert
+		const toggleButton = screen.getByRole("button", {
+			name: /北海道・東北の選択を解除/,
+		});
+		expect(toggleButton).toHaveTextContent("選択を解除");
+	});
+
+	it("地域内のすべての都道府県が選択されている状態で地域ボタンをクリックすると、その地域の都道府県がすべて選択解除される", async () => {
+		// Arrange
+		const user = userEvent.setup();
+		const onUrlUpdate = vi.fn<OnUrlUpdateFunction>();
+		render(<WithData />, {
+			wrapper: withNuqsTestingAdapter({
+				searchParams: "?prefCodes=1,2,3,4,5,6,7",
+				onUrlUpdate,
+			}),
+		});
+		const toggleButton = screen.getByRole("button", {
+			name: /北海道・東北の選択を解除/,
+		});
+
+		// Act
+		await user.click(toggleButton);
+
+		// Assert
+		expect(onUrlUpdate).toHaveBeenCalledOnce();
+		const event = onUrlUpdate.mock.calls[0][0];
+		expect(event.queryString).toBe("");
+		expect(event.searchParams.get("prefCodes")).toBe(null);
+	});
+
+	it("地域内の一部の都道府県のみが選択されている場合、地域ボタンは「すべて選択」表示のままである", async () => {
+		// Arrange
+		render(<WithData />, {
+			wrapper: withNuqsTestingAdapter({
+				searchParams: "?prefCodes=1,2", // 北海道・東北の一部のみ選択
+			}),
+		});
+
+		// Assert
+		const toggleButton = screen.getByRole("button", {
+			name: /北海道・東北をすべて選択/,
+		});
+		expect(toggleButton).toHaveTextContent("すべて選択");
+	});
+
+	it("地域内の一部の都道府県が選択されている状態で地域ボタンをクリックすると、その地域の都道府県がすべて選択される", async () => {
+		// Arrange
+		const user = userEvent.setup();
+		const onUrlUpdate = vi.fn<OnUrlUpdateFunction>();
+		render(<WithData />, {
+			wrapper: withNuqsTestingAdapter({
+				searchParams: "?prefCodes=1,2", // 北海道・東北の一部のみ選択
+				onUrlUpdate,
+			}),
+		});
+		const toggleButton = screen.getByRole("button", {
+			name: /北海道・東北をすべて選択/,
+		});
+
+		// Act
+		await user.click(toggleButton);
+
+		// Assert
+		expect(onUrlUpdate).toHaveBeenCalledOnce();
+		const event = onUrlUpdate.mock.calls[0][0];
+		expect(event.queryString).toBe("?prefCodes=1,2,3,4,5,6,7");
+		expect(event.searchParams.get("prefCodes")).toBe("1,2,3,4,5,6,7");
+	});
+
 	it("個別の都道府県ボタンをクリックすると、aria-pressed属性がtrueに更新される", async () => {
 		// Arrange
 		const user = userEvent.setup();
@@ -230,5 +308,63 @@ describe("インタラクションの確認", () => {
 			return normalizedText === "選択済み:1/47";
 		});
 		expect(newLiveRegion).toHaveAttribute("aria-live", "polite");
+	});
+
+	it("地域内のすべての都道府県が選択されている場合、地域ボタンのaria-pressed属性がtrueになる", async () => {
+		// Arrange
+		render(<WithData />, {
+			wrapper: withNuqsTestingAdapter({
+				searchParams: "?prefCodes=1,2,3,4,5,6,7", // 北海道・東北の全県を選択
+			}),
+		});
+
+		// Assert
+		const toggleButton = screen.getByRole("button", {
+			name: /北海道・東北の選択を解除/,
+		});
+		expect(toggleButton).toHaveAttribute("aria-pressed", "true");
+	});
+
+	it("地域内の一部の都道府県のみが選択されている場合、地域ボタンのaria-pressed属性がfalseになる", async () => {
+		// Arrange
+		render(<WithData />, {
+			wrapper: withNuqsTestingAdapter({
+				searchParams: "?prefCodes=1,2", // 北海道・東北の一部のみ選択
+			}),
+		});
+
+		// Assert
+		const toggleButton = screen.getByRole("button", {
+			name: /北海道・東北をすべて選択/,
+		});
+		expect(toggleButton).toHaveAttribute("aria-pressed", "false");
+	});
+
+	it("地域ボタンをクリックすると、aria-pressed属性が適切に更新される", async () => {
+		// Arrange
+		const user = userEvent.setup();
+		render(<WithData />, {
+			wrapper: withNuqsTestingAdapter(),
+		});
+		const toggleButton = screen.getByRole("button", {
+			name: /北海道・東北をすべて選択/,
+		});
+
+		// 初期状態: 未選択
+		expect(toggleButton).toHaveAttribute("aria-pressed", "false");
+
+		// Act: 全選択
+		await user.click(toggleButton);
+
+		// Assert: 全選択後はtrueになる
+		expect(toggleButton).toHaveAttribute("aria-pressed", "true");
+		expect(toggleButton).toHaveTextContent("選択を解除");
+
+		// Act: 選択解除
+		await user.click(toggleButton);
+
+		// Assert: 選択解除後はfalseに戻る
+		expect(toggleButton).toHaveAttribute("aria-pressed", "false");
+		expect(toggleButton).toHaveTextContent("すべて選択");
 	});
 });
