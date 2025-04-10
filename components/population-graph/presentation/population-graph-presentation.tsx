@@ -49,7 +49,6 @@ const baseOptions = {
 	},
 	yAxis: {
 		title: {
-			text: "人口 (万人)",
 			margin: 8,
 		},
 		labels: {
@@ -157,6 +156,12 @@ export const PopulationGraphPresentation: FC<Props> = ({
 	const options = {
 		...baseOptions,
 		series,
+		yAxis: {
+			...baseOptions.yAxis,
+			title: {
+				text: `${activeTab} (万人)`,
+			},
+		},
 	};
 
 	return (
