@@ -62,4 +62,16 @@ describe("CategorySelector", () => {
 			"-1",
 		);
 	});
+
+	it("disabled が true の場合、すべてのボタンが disabled 状態になる", () => {
+		render(
+			<Default activeTab="総人口" setActiveTab={() => {}} disabled={true} />,
+		);
+
+		const buttons = screen.getAllByRole("tab");
+		for (const button of buttons) {
+			expect(button).toBeDisabled();
+			expect(button).toHaveClass("cursor-not-allowed");
+		}
+	});
 });
