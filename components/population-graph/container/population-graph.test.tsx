@@ -1,22 +1,22 @@
-import { getPopulation } from "@/api/getPopulation";
-import { populationDataFactory } from "@/components/population-graph/mock/factory";
+import { getPrefectures } from "@/api/getPrefectures";
 import { searchParamsCache } from "@/lib/search-params";
-import { render, screen } from "@testing-library/react";
-import { withNuqsTestingAdapter } from "nuqs/adapters/testing";
+import { getProps } from "@/lib/test-utility";
+import type { ReactElement } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { mockPrefectures } from "../../prefecture-selector/mock/prefectures";
+import { PopulationGraphPresentation } from "../presentation/population-graph-presentation";
 import { PopulationGraph } from "./population-graph";
+import { PopulationGraphSWRAdapter } from "./population-graph-swr-adapter";
 
-// API呼び出しをモック
-vi.mock("@/api/getPopulation", () => ({
-	getPopulation: vi.fn(),
+// モック定義
+vi.mock("@/api/getPrefectures", () => ({
+	getPrefectures: vi.fn(),
 }));
 
-vi.mock("@/api/getPrefectures", () => ({
-	getPrefectures: vi.fn().mockResolvedValue([
-		{ prefCode: 1, prefName: "北海道" },
-		{ prefCode: 13, prefName: "東京都" },
-		{ prefCode: 27, prefName: "大阪府" },
-	]),
+vi.mock("@/lib/search-params", () => ({
+	searchParamsCache: {
+		all: vi.fn(),
+	},
 }));
 
 describe("PopulationGraph", () => {
@@ -24,57 +24,58 @@ describe("PopulationGraph", () => {
 		vi.clearAllMocks();
 	});
 
-	it("API呼び出しが適切に行われる", async () => {
+	it("prefCodesが空の場合、空のデータで直接PresentationComponentを返す", async () => {
 		// Arrange
-		// searchParamsCache.all() が { prefCodes: [1, 2] } を返すようにモック
-		vi.spyOn(searchParamsCache, "all").mockReturnValue({ prefCodes: [1, 2] });
-		// getPopulation のモック設定
-		const mockedGetPopulation = vi.mocked(getPopulation, true);
-		mockedGetPopulation.mockImplementation((prefCode: number) => {
-			if (prefCode === 1) return Promise.resolve(populationDataFactory.build());
-			if (prefCode === 2) return Promise.resolve(populationDataFactory.build());
-			return Promise.resolve(populationDataFactory.build());
-		});
+		const mockedSearchParamsCache = vi.mocked(searchParamsCache);
+		mockedSearchParamsCache.all.mockReturnValue({ prefCodes: [] });
 		// Act
-		render(await PopulationGraph({}), {
-			wrapper: withNuqsTestingAdapter(),
-		});
+		const result = await PopulationGraph({});
 		// Assert
-		expect(getPopulation).toHaveBeenCalledTimes(2);
-		expect(getPopulation).toHaveBeenCalledWith(1);
-		expect(getPopulation).toHaveBeenCalledWith(2);
+		expect(getPrefectures).not.toHaveBeenCalled();
+		// getProps を使用して結果の props を検証
+		const props = getProps(result as ReactElement, PopulationGraphPresentation);
+		expect(props).toMatchObject({
+			population: [],
+			prefectures: [],
+			selectedPrefCodes: [],
+		});
 	});
 
-	it("prefCodes が存在しない場合に「都道府県を選択してください。」と表示される", async () => {
+	it("prefCodesが存在する場合、正しくデータを取得してSWRAdapterに渡す", async () => {
 		// Arrange
-		vi.spyOn(searchParamsCache, "all").mockReturnValue({
-			prefCodes: [],
+		const selectedPrefCodes = [1, 13];
+		const mockedSearchParamsCache = vi.mocked(searchParamsCache);
+		mockedSearchParamsCache.all.mockReturnValue({
+			prefCodes: selectedPrefCodes,
 		});
+		const mockedGetPrefectures = vi.mocked(getPrefectures);
+		mockedGetPrefectures.mockResolvedValue(mockPrefectures);
 		// Act
-		render(await PopulationGraph({}), {
-			wrapper: withNuqsTestingAdapter(),
-		});
+		const result = await PopulationGraph({});
 		// Assert
-		expect(getPopulation).not.toHaveBeenCalled();
-		expect(
-			screen.getByText("都道府県を選択してください。"),
-		).toBeInTheDocument();
+		expect(getPrefectures).toHaveBeenCalledTimes(1);
+		// getProps を使用して結果の props を検証
+		const props = getProps(result as ReactElement, PopulationGraphSWRAdapter);
+		expect(props).toMatchObject({
+			prefectures: mockPrefectures,
+			selectedPrefCodes,
+		});
 	});
 
-	it("API 呼び出しが失敗した場合はエラーをスローする", async () => {
+	it("getPrefecturesでエラーが発生した場合、エラーがスローされる", async () => {
 		// Arrange
-		// searchParamsCache.all() が { prefCodes: [1] } を返すようにモック
-		vi.spyOn(searchParamsCache, "all").mockReturnValue({ prefCodes: [1] });
-		// getPopulation がエラーをスローするようにモックする
-		const mockedGetPopulation = vi.mocked(getPopulation, true);
-		mockedGetPopulation.mockRejectedValue(new Error("API Error"));
-		// エラー出力をキャプチャするために console.error をスパイする
+		const selectedPrefCodes = [1, 13];
+		const mockedSearchParamsCache = vi.mocked(searchParamsCache);
+		mockedSearchParamsCache.all.mockReturnValue({
+			prefCodes: selectedPrefCodes,
+		});
+		const mockedGetPrefectures = vi.mocked(getPrefectures);
+		mockedGetPrefectures.mockRejectedValue(new Error("API Error"));
+		// エラー出力をキャプチャ
 		const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 		// Act, Assert
-		await expect(async () => {
-			render(await PopulationGraph({}), { wrapper: withNuqsTestingAdapter() });
-		}).rejects.toThrow("API Error");
-		expect(getPopulation).toHaveBeenCalledTimes(1);
+		await expect(PopulationGraph({})).rejects.toThrow("API Error");
+		expect(getPrefectures).toHaveBeenCalledTimes(1);
 		consoleSpy.mockRestore();
 	});
 });
